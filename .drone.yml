@@ -1,0 +1,24 @@
+kind: pipeline
+type: docker
+name: build and release
+
+steps:
+  - name: build
+    image: mcr.microsoft.com/dotnet/sdk
+    commands:
+      - dotnet restore
+      - dotnet build
+  - name: publish win-x64
+    image: mcr.microsoft.com/dotnet/sdk
+    commands:
+      - dotnet publish -r win-x64
+  - name: upload
+    image: plugins/s3
+    settings:
+      bucket: bradley-chatha
+      source: bin/debug/win-x64/publish/MumImage.exe
+      target: /artifacts/MumImage/
+      access_key:
+        from_secrets: s3_access_key
+      secret_key:
+        from_secrets: s3_secret_key

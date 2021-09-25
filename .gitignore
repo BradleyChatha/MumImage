@@ -1,0 +1,5 @@
+bin/
+obj/
+reflected/
+index.db
+cats.sdl
