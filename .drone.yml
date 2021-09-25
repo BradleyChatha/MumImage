@@ -3,11 +3,10 @@ type: docker
 name: build and release
 
 steps:
-  - name: build
+  - name: restore
     image: mcr.microsoft.com/dotnet/sdk
     commands:
       - dotnet restore
-      - dotnet build
   - name: publish win-x64
     image: mcr.microsoft.com/dotnet/sdk
     commands:
@@ -17,7 +16,7 @@ steps:
     settings:
       bucket: bradley-chatha
       source: bin/debug/win-x64/publish/MumImage.exe
-      target: /artifacts/MumImage/
+      target: /public/artifacts/MumImage/
       access_key:
         from_secrets: s3_access_key
       secret_key:
