@@ -18,8 +18,8 @@ steps:
       source: ./bin/Debug/net5.0/win-x64/publish/MumImage.exe
       target: /public/artifacts/MumImage/
       access_key:
-        from_secrets: s3_access_key
+        from_secret: s3_access_key
       secret_key:
-        from_secrets: s3_secret_key
+        from_secret: s3_secret_key
       region: eu-west-2
-      strip_prefix: /bin/Debug/net5.0/win-x64/publish/
+      strip_prefix: ./bin/Debug/net5.0/win-x64/publish/
