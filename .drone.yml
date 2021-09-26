@@ -23,3 +23,4 @@ steps:
         from_secret: s3_secret_key
       region: eu-west-2
       strip_prefix: ./bin/Debug/net5.0/win-x64/publish/
+      acl: public-read
