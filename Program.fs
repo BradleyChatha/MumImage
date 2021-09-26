@@ -71,11 +71,12 @@ let getSdl =
     else
         Collections.Generic.List<string * string>()
 
-let doReflect (db : SqliteConnection) =
+let doReflect (db : SqliteConnection) (prefix : string) =
     let command = db.CreateCommand ()
     command.CommandText <- @"
-        SELECT * FROM files;
+        SELECT * FROM files WHERE UPPER(keyword) LIKE $prefix COLLATE NOCASE;
     "
+    command.Parameters.AddWithValue ("$prefix", prefix) |> ignore
 
     if not (Directory.Exists (Path.Combine ("reflected"))) then
         Directory.CreateDirectory "reflected" |> ignore
@@ -141,7 +142,7 @@ let main argv =
         rebuildIndex db path
         transaction.Commit ()
     | "reflect" ->
-        doReflect db
+        doReflect db path
     | "csv" ->
         createCsv db
     | _ -> failwith $"Unknown command '{command}'"
