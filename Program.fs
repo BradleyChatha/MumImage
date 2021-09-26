@@ -4,6 +4,7 @@ open Microsoft.Data.Sqlite
 open System.IO
 open System.Text.RegularExpressions
 open System.Diagnostics
+open System.Text
 
 let getDb =
     let conn = new SqliteConnection("Data Source=index.db")
@@ -111,6 +112,23 @@ let doReflect (db : SqliteConnection) =
         else
             failwith "Unsupported operating system."
 
+let createCsv (db : SqliteConnection) =
+    let command = db.CreateCommand ()
+    command.CommandText <- @"
+        SELECT keyword, COUNT(keyword)
+        FROM files
+        GROUP BY keyword;
+    "
+
+    let builder = StringBuilder ()
+    builder.AppendLine "keyword,count" |> ignore
+
+    let reader = command.ExecuteReader ()
+    while reader.Read () do
+        builder.AppendLine ($"{reader.GetString 0},{reader.GetInt64 1}") |> ignore
+
+    File.WriteAllText ("keywords.csv", builder.ToString ())
+
 [<EntryPoint>]
 let main argv =
     let command = if argv.Length < 1 then "<none given>" else argv.[0]
@@ -124,5 +142,7 @@ let main argv =
         transaction.Commit ()
     | "reflect" ->
         doReflect db
+    | "csv" ->
+        createCsv db
     | _ -> failwith $"Unknown command '{command}'"
     0
