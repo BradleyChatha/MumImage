@@ -99,14 +99,14 @@ let doReflect (db : SqliteConnection) =
             if not (Directory.Exists catDir) then
                 Directory.CreateDirectory catDir |> ignore
             if OperatingSystem.IsWindows () then
-                Process.Start ("cmd.exe", ["/C"; "mklink"; catFile; path]) |> ignore
+                (Process.Start ("cmd.exe", ["/C"; "mklink"; catFile; path])).WaitForExit ()
             elif OperatingSystem.IsLinux () then
                 Process.Start ("/bin/bash", ["-c"; $"ln -s '{path}' '{catFile}'"]) |> ignore
             else
                 failwith "Unsupported operating system."
 
         if OperatingSystem.IsWindows () then
-            Process.Start ("cmd.exe", ["/C"; "mklink"; file; path]) |> ignore
+            (Process.Start ("cmd.exe", ["/C"; "mklink"; file; path])).WaitForExit ()
         elif OperatingSystem.IsLinux () then
             Process.Start ("/bin/bash", ["-c"; $"ln -s '{path}' '{file}'"]) |> ignore
         else
